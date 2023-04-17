@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  /* Foreground, Background */
+  scrollbar-color: #999 #333;
+}
+
+*::-webkit-scrollbar {
+  width: 10px; /* Mostly for vertical scrollbars */
+  height: 10px; /* Mostly for horizontal scrollbars */
+}
+
+*::-webkit-scrollbar-thumb {
+  /* Foreground */
+  background: #999;
+}
+
+*::-webkit-scrollbar-track {
+  /* Background */
+  background: #333;
+}
