@@ -20,11 +20,11 @@ const EnabledPagebloxButton = ({
     >
       <button
         className={`${
-          reviewMode ? "tw-opacity-100" : "tw-opacity-50"
-        } tw-bg-slate-700 hover:bg-slate-900 tw-rounded-full tw-p-2.5 tw-inline-flex tw-items-center tw-mr-2`}
+          reviewMode ? "tw-ring-green-500" : "tw-ring-pink-500"
+        } tw-bg-slate-700 hover:bg-slate-900 tw-rounded-full tw-ring-4 tw-p-2.5 tw-inline-flex tw-items-center tw-mr-2`}
         onClick={onWidgetClick}
       >
-        <img src={logo} height={25} width={25} alt="Pageblox logo" />
+        <img src={logo} height={30} width={30} alt="Pageblox logo" />
       </button>
     </div>
   );
