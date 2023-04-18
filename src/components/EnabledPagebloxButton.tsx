@@ -3,13 +3,13 @@ import logo from "../images/pageblox-logo.svg";
 
 interface EnabledPagebloxButtonInterface {
   shouldDisplay: boolean;
-  reviewModeEnabled: boolean;
+  reviewMode: boolean;
   onWidgetClick: () => void;
 }
 
 const EnabledPagebloxButton = ({
   shouldDisplay,
-  reviewModeEnabled,
+  reviewMode,
   onWidgetClick,
 }: EnabledPagebloxButtonInterface) => {
   return (
@@ -20,7 +20,7 @@ const EnabledPagebloxButton = ({
     >
       <button
         className={`${
-          reviewModeEnabled ? "tw-opacity-100" : "tw-opacity-50"
+          reviewMode ? "tw-opacity-100" : "tw-opacity-50"
         } tw-bg-slate-700 hover:bg-slate-900 tw-rounded-full tw-p-2.5 tw-inline-flex tw-items-center tw-mr-2`}
         onClick={onWidgetClick}
       >

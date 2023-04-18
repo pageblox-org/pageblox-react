@@ -1,35 +1,49 @@
 import { initializeApp } from "firebase/app"
 import { getFirestore } from "firebase/firestore"
 import { getStorage } from "firebase/storage"
-import { getAuth } from "firebase/auth"
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth"
 
-let firebaseConfig
-
-if (process.env.NODE_ENV === "production") {
-  firebaseConfig = {
-    apiKey: "AIzaSyAjAfuXwW6EaDf-fi-6LkhpzmHpucpWv0Y",
-    authDomain: "pageblox-server-4c58a.firebaseapp.com",
-    projectId: "pageblox-server-4c58a",
-    storageBucket: "pageblox-server-4c58a.appspot.com",
-    messagingSenderId: "624958838328",
-    appId: "1:624958838328:web:e1d3736fee2fd49b6538cd",
-    measurementId: "G-TS0MBHV5RX"
-  }
-} else {
-  firebaseConfig = {
-    apiKey: "AIzaSyCVbv7tFW_ayAiBkUSfJ5eroBXQLc3Yz-I",
-    authDomain: "pageblox-server-dev.firebaseapp.com",
-    projectId: "pageblox-server-dev",
-    storageBucket: "pageblox-server-dev.appspot.com",
-    messagingSenderId: "973664002569",
-    appId: "1:973664002569:web:6802cc030c705e074b4ed8",
-    measurementId: "G-0QKKNZBXVC"
-  }
+const firebaseConfig = {
+  apiKey: "AIzaSyAd_Z7ty-pB7bUezEMtDruF_GYWBCfpm7c",
+  authDomain: "pageblox-3637a.firebaseapp.com",
+  projectId: "pageblox-3637a",
+  storageBucket: "pageblox-3637a.appspot.com",
+  messagingSenderId: "708437602502",
+  appId: "1:708437602502:web:8c64a5b759360d267ee7c7",
+  measurementId: "G-BS8MJMCL1B"
 }
 
 // Initialize Firebase
 
 const app = initializeApp(firebaseConfig)
+const googleProvider = new GoogleAuthProvider()
+
+export const signInWithGoogle = (setDisplayName: (name: string) => void, setReviewModeEnabled: (enabled: boolean) => void) => {
+  signInWithPopup(auth, googleProvider).then((result) => {
+    localStorage.setItem("pagebloxUserInfo", JSON.stringify(
+      {
+        displayName: result.user.displayName,
+        email: result.user.email,
+        photoURL: result.user.photoURL,
+      }
+    ))
+    result.user.displayName && setDisplayName(result.user.displayName)
+    setReviewModeEnabled(true)
+  }).catch((error) => {
+    alert(error)
+  })
+}
+
+export const signOutWithGoogle = (setDisplayName: (name: string | null) => void, setReviewModeEnabled: (enabled: boolean) => void) => {
+  signOut(auth).then(() => {
+    localStorage.removeItem("pagebloxUserInfo")
+    setDisplayName(null)
+    setReviewModeEnabled(false)
+  }).catch((error) => {
+    alert(error)
+  })
+}
+
 export const database = getFirestore(app)
 export const storage = getStorage(app)
 export const auth = getAuth(app)

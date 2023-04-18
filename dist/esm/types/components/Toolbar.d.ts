@@ -12,6 +12,8 @@ interface ToolbarProps {
     onResolveChange: (commentID: string, shouldResolve: boolean) => void;
     selectedComment: Comment | null;
     setSelectedComment: (comment: Comment | null) => void;
+    setDisplayName: (name: string | null) => void;
+    setReviewMode: (reviewMode: boolean) => void;
 }
-declare const Toolbar: ({ showCommentView, setShowCommentView, pageRef, comments, replies, deleteComment, fetchReplies, saveReply, onResolveChange, selectedComment, setSelectedComment, }: ToolbarProps) => JSX.Element;
+declare const Toolbar: ({ showCommentView, setShowCommentView, pageRef, comments, replies, deleteComment, fetchReplies, saveReply, onResolveChange, selectedComment, setSelectedComment, setDisplayName, setReviewMode, }: ToolbarProps) => JSX.Element;
 export default Toolbar;

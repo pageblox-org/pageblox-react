@@ -2,10 +2,13 @@ import React, { RefObject, useState } from "react";
 import { Comment, Reply } from "../pageblox";
 import CommentsList from "./CommentsList";
 import CommentDisplay from "./CommentDisplay";
+import { signOutWithGoogle } from "../utils/firebase-config";
 
 interface SidebarButtonsProps {
   setShowComments: (show: boolean) => void;
   comments: Comment[];
+  setDisplayName: (name: string | null) => void;
+  setReviewMode: (reviewMode: boolean) => void;
 }
 
 interface ToolbarProps {
@@ -20,13 +23,28 @@ interface ToolbarProps {
   onResolveChange: (commentID: string, shouldResolve: boolean) => void;
   selectedComment: Comment | null;
   setSelectedComment: (comment: Comment | null) => void;
+  setDisplayName: (name: string | null) => void;
+  setReviewMode: (reviewMode: boolean) => void;
 }
 
-const SidebarButtons = ({ setShowComments, comments }: SidebarButtonsProps) => (
-  <div className="tw-right-7 tw-top-5 tw-z-50 tw-fixed">
+const SidebarButtons = ({
+  setShowComments,
+  comments,
+  setDisplayName,
+  setReviewMode,
+}: SidebarButtonsProps) => (
+  <div className="tw-right-7 tw-top-5 tw-z-50 tw-fixed tw-flex tw-items-center tw-gap-2">
+    <button
+      className="tw-border focus:tw-outline-none focus:tw-ring-4 tw-font-medium tw-rounded-lg tw-text-sm tw-px-5 tw-py-2.5 tw-tw-mr-2 tw-bg-gray-800 tw-text-white tw-border-gray-600 hover:tw-bg-gray-700 hover:tw-border-gray-600 focus:tw-ring-gray-700"
+      onClick={() => {
+        signOutWithGoogle(setDisplayName, setReviewMode);
+      }}
+    >
+      Log out
+    </button>
     <button
       type="button"
-      className="tw-relative tw-bg-gray-700 hover:tw-bg-gray-600 tw-rounded-full tw-p-2.5 tw-m-1 tw-inline-flex tw-items-center"
+      className="tw-relative tw-bg-gray-700 hover:tw-bg-gray-600 tw-rounded-full tw-p-2.5 tw-inline-flex tw-items-center"
       onClick={() => setShowComments(true)}
     >
       <svg
@@ -64,6 +82,8 @@ const Toolbar = ({
   onResolveChange,
   selectedComment,
   setSelectedComment,
+  setDisplayName,
+  setReviewMode,
 }: ToolbarProps): JSX.Element => {
   const [showComments, setShowComments] = useState(false);
 
@@ -108,7 +128,14 @@ const Toolbar = ({
           Close
         </button>
       ) : (
-        <SidebarButtons setShowComments={setShowComments} comments={comments} />
+        <div className="tw-flex tw-items-end">
+          <SidebarButtons
+            setShowComments={setShowComments}
+            comments={comments}
+            setDisplayName={setDisplayName}
+            setReviewMode={setReviewMode}
+          />
+        </div>
       )}
       <CommentsList
         pageRef={pageRef}

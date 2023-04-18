@@ -24,8 +24,5 @@ interface PagebloxProviderInterface {
     projectId: string;
     excludePaths?: string[];
 }
-declare const usePageblox: () => {
-    onTryPageblox: (() => void) | undefined;
-};
 declare const PagebloxProvider: (pagebloxProvider: PagebloxProviderInterface) => JSX.Element;
-export { PagebloxProvider, usePageblox };
+export { PagebloxProvider };

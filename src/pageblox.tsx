@@ -15,7 +15,7 @@ import {
   where,
 } from "firebase/firestore";
 import uuid from "react-uuid";
-import { auth, database, storage } from "./utils/firebase-config";
+import { database, signInWithGoogle, storage } from "./utils/firebase-config";
 import { ItemTypes } from "./utils/ItemTypes";
 import Toolbar from "./components/Toolbar";
 import CommentBlocks from "./components/CommentBlocks";
@@ -24,8 +24,6 @@ import { calculateScroll } from "./utils/calculateScroll";
 import { getPathTo } from "./utils/getPathTo";
 import CreateCommentModal from "./components/CreateCommentModal";
 import { ref, uploadBytes } from "firebase/storage";
-import RegisterModal from "./components/RegisterModal";
-import { createUserWithEmailAndPassword } from "firebase/auth";
 
 export interface Comment {
   id: string;
@@ -55,16 +53,20 @@ interface PagebloxProviderInterface {
   excludePaths?: string[];
 }
 
+const COMMENTS_COLLECTION =
+  process.env.NODE_ENV === "production" ? "comments" : "comments-dev";
+const REPLIES_COLLECTION =
+  process.env.NODE_ENV === "production" ? "replies" : "replies-dev";
+
 const randomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
 
 const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
   const [blocks, setBlocks] = useState<Comment[]>([]);
   const [replies, setReplies] = useState<Reply[]>([]);
-  const [reviewModeEnabled, setReviewModeEnabled] = useState<boolean>(false);
+  const [reviewMode, setReviewMode] = useState<boolean>(false);
   const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
   const [showCommentView, setShowCommentView] = useState<boolean>(false);
   const [showCreateView, setShowCreateView] = useState<boolean>(false);
-  const [showRegisterModal, setShowRegisterModal] = useState<boolean>(false);
   const [draftedComment, setDraftedComment] = useState<Comment | null>(null);
   const [showPagebloxButton, setShowPagebloxButton] = useState<boolean>(true);
   const [displayName, setDisplayName] = useState<string | null>(null);
@@ -105,7 +107,7 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
     if (typeof window !== "undefined") {
       const unsubscribeComments = onSnapshot(
         query(
-          collection(database, "comments"),
+          collection(database, COMMENTS_COLLECTION),
           where("pathname", "==", window.location.pathname),
           where("projectId", "==", projectId)
         ),
@@ -130,7 +132,7 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
     if (typeof window !== "undefined" && blocks.length > 0) {
       const unsubscribeReplies = onSnapshot(
         query(
-          collection(database, "replies"),
+          collection(database, REPLIES_COLLECTION),
           where(
             "parent_comment_id",
             "in",
@@ -155,14 +157,14 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
   }, [blocks]);
 
   const fetchDisplayName = () => {
-    const currDisplayName = localStorage.getItem("pagebloxDisplayName");
+    const currUserInfo = localStorage.getItem("pagebloxUserInfo");
 
-    setDisplayName(currDisplayName);
+    setDisplayName(currUserInfo ? JSON.parse(currUserInfo).displayName : null);
   };
 
   const moveComment = useCallback(
     async (id: string, left: number, top: number, domElement: HTMLElement) => {
-      await updateDoc(doc(database, "comments", id), {
+      await updateDoc(doc(database, COMMENTS_COLLECTION, id), {
         dom: getPathTo(domElement),
         x: left,
         y: top,
@@ -236,7 +238,7 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
   );
 
   const saveReply = async (id: string, message: string) => {
-    await addDoc(collection(database, "replies"), {
+    await addDoc(collection(database, REPLIES_COLLECTION), {
       id: uuid(),
       author: displayName,
       profileColor: randomColor,
@@ -267,22 +269,25 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
         }),
       };
 
-      await setDoc(doc(database, "comments", savedComment.id), savedComment);
+      await setDoc(
+        doc(database, COMMENTS_COLLECTION, savedComment.id),
+        savedComment
+      );
       setDraftedComment(null);
     }
   };
 
   const deleteComment = async (id: string) => {
-    await deleteDoc(doc(database, "comments", id));
+    await deleteDoc(doc(database, COMMENTS_COLLECTION, id));
 
     const replyQuery = query(
-      collection(database, "replies"),
+      collection(database, REPLIES_COLLECTION),
       where("parent_comment_id", "==", id)
     );
     const querySnapshot = await getDocs(replyQuery);
 
     querySnapshot.forEach(async (document) => {
-      await deleteDoc(doc(database, "replies", document.id));
+      await deleteDoc(doc(database, REPLIES_COLLECTION, document.id));
     });
 
     setSelectedComment(null);
@@ -336,7 +341,7 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
   };
 
   const onResolveChange = async (commentID: string, shouldResolve: boolean) => {
-    await updateDoc(doc(database, "comments", commentID), {
+    await updateDoc(doc(database, COMMENTS_COLLECTION, commentID), {
       resolved: shouldResolve,
     });
 
@@ -353,9 +358,9 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
 
   const onWidgetClick = () => {
     if (displayName) {
-      setReviewModeEnabled(!reviewModeEnabled);
+      setReviewMode(!reviewMode);
     } else {
-      setShowRegisterModal(true);
+      signInWithGoogle(setDisplayName, setReviewMode);
     }
   };
 
@@ -372,38 +377,10 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
     }
   };
 
-  const handleRegisterUser = async (
-    name: string,
-    email: string,
-    password: string
-  ) => {
-    try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-      if (userCredential.user) {
-        setShowRegisterModal(false);
-        localStorage.setItem("pagebloxDisplayName", name);
-        setDisplayName(name);
-        setReviewModeEnabled(true);
-      }
-    } catch (error) {
-      alert(error);
-    }
-  };
-
   if (pagebloxEnabled) {
     return (
       <>
-        <RegisterModal
-          showRegisterModal={showRegisterModal}
-          setShowRegisterModal={setShowRegisterModal}
-          handleRegisterUser={handleRegisterUser}
-        />
-        {reviewModeEnabled ? (
+        {reviewMode ? (
           <>
             <Toolbar
               showCommentView={showCommentView}
@@ -417,6 +394,8 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
               onResolveChange={onResolveChange}
               selectedComment={selectedComment}
               setSelectedComment={setSelectedComment}
+              setDisplayName={setDisplayName}
+              setReviewMode={setReviewMode}
             />
             <div ref={pageRef} className="tw-pt-20">
               <div
@@ -451,7 +430,7 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
                 )}
                 <EnabledPagebloxButton
                   shouldDisplay={showPagebloxButton}
-                  reviewModeEnabled={reviewModeEnabled}
+                  reviewMode={reviewMode}
                   onWidgetClick={onWidgetClick}
                 />
               </div>
@@ -462,7 +441,7 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
             {pagebloxProvider.children}
             <EnabledPagebloxButton
               shouldDisplay={showPagebloxButton}
-              reviewModeEnabled={reviewModeEnabled}
+              reviewMode={reviewMode}
               onWidgetClick={onWidgetClick}
             />
           </>
