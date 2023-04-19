@@ -120,59 +120,6 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
     }
   };
 
-  const fetchComments = () => {
-    if (typeof window !== "undefined") {
-      const unsubscribeComments = onSnapshot(
-        query(
-          collection(database, COMMENTS_COLLECTION),
-          where("pathname", "==", window.location.pathname),
-          where("projectId", "==", pagebloxProvider.projectKey)
-        ),
-        (querySnapshot) => {
-          const blocks: Comment[] = [];
-
-          querySnapshot.forEach((doc) => {
-            blocks.push(Object.assign({ id: doc.id }, doc.data()) as Comment);
-          });
-
-          setBlocks(blocks);
-        }
-      );
-
-      return () => {
-        unsubscribeComments();
-      };
-    }
-  };
-
-  const fetchReplies = () => {
-    if (typeof window !== "undefined" && blocks.length > 0) {
-      const unsubscribeReplies = onSnapshot(
-        query(
-          collection(database, REPLIES_COLLECTION),
-          where(
-            "parent_comment_id",
-            "in",
-            blocks.map((block) => block.id.toString())
-          )
-        ),
-        (querySnapshot) => {
-          const replies: Reply[] = [];
-
-          querySnapshot.forEach((doc) => {
-            replies.push(doc.data() as Reply);
-          });
-
-          setReplies(replies);
-        }
-      );
-
-      return () => {
-        unsubscribeReplies();
-      };
-    }
-  };
-
   const moveComment = useCallback(
     async (id: string, left: number, top: number, domElement: HTMLElement) => {
       await updateDoc(doc(database, COMMENTS_COLLECTION, id), {
@@ -389,6 +336,59 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
   };
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const unsubscribeComments = onSnapshot(
+        query(
+          collection(database, COMMENTS_COLLECTION),
+          where("pathname", "==", window.location.pathname),
+          where("projectId", "==", pagebloxProvider.projectKey)
+        ),
+        (querySnapshot) => {
+          const blocks: Comment[] = [];
+
+          querySnapshot.forEach((doc) => {
+            blocks.push(Object.assign({ id: doc.id }, doc.data()) as Comment);
+          });
+
+          setBlocks(blocks);
+        }
+      );
+
+      return () => {
+        unsubscribeComments();
+      };
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && blocks.length > 0) {
+      const unsubscribeReplies = onSnapshot(
+        query(
+          collection(database, REPLIES_COLLECTION),
+          where(
+            "parent_comment_id",
+            "in",
+            blocks.map((block) => block.id.toString())
+          )
+        ),
+        (querySnapshot) => {
+          const replies: Reply[] = [];
+
+          querySnapshot.forEach((doc) => {
+            replies.push(doc.data() as Reply);
+          });
+
+          setReplies(replies);
+        }
+      );
+
+      return () => {
+        unsubscribeReplies();
+      };
+    }
+  }, [blocks]);
+
+  useEffect(() => {
     shouldDisplayInstructions();
   }, [reviewMode]);
 
@@ -396,12 +396,7 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
     saveEnabledState();
     checkExcludedPaths();
     fetchDisplayName();
-    fetchComments();
   }, []);
-
-  useEffect(() => {
-    fetchReplies();
-  }, [blocks]);
 
   if (pagebloxEnabled) {
     return (
