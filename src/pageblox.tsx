@@ -7,7 +7,6 @@ import {
   collection,
   deleteDoc,
   doc,
-  getDoc,
   getDocs,
   onSnapshot,
   query,
@@ -86,13 +85,7 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
 
     if (searchParams.has("enable_pageblox")) {
       if (searchParams.get("enable_pageblox") === "true") {
-        const isValidAPIKey = await checkProjectKey();
-
-        if (isValidAPIKey) {
-          localStorage.setItem("pagebloxEnabled", "true");
-        } else {
-          alert("Must have a valid project key to use Pageblox.");
-        }
+        localStorage.setItem("pagebloxEnabled", "true");
       } else {
         localStorage.setItem("pagebloxEnabled", "false");
       }
@@ -101,18 +94,6 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
     setPagebloxEnabled(
       localStorage.getItem("pagebloxEnabled") === "true" ?? false
     );
-  };
-
-  const checkProjectKey = async () => {
-    const projectRef = doc(database, "projects", pagebloxProvider.projectKey);
-    const projectDoc = await getDoc(projectRef);
-
-    if (!projectDoc.exists()) {
-      alert("Must have a valid project key to use Pageblox.");
-      return false;
-    } else {
-      return true;
-    }
   };
 
   const checkExcludedPaths = () => {
@@ -499,15 +480,45 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
   }
 };
 
-const PagebloxProvider = (pagebloxProvider: PagebloxProviderInterface) => (
-  <DndProvider backend={HTML5Backend}>
-    <PagebloxDndProvider
-      projectKey={pagebloxProvider.projectKey}
-      excludePaths={pagebloxProvider.excludePaths}
-    >
-      {pagebloxProvider.children}
-    </PagebloxDndProvider>
-  </DndProvider>
-);
+const PagebloxProvider = (pagebloxProvider: PagebloxProviderInterface) => {
+  const [isValidAPIKey, setIsValidApiKey] = useState(false);
+
+  const checkProjectKey = () => {
+    const unsubscribeProjects = onSnapshot(
+      doc(database, "projects", pagebloxProvider.projectKey),
+      (doc) => {
+        if (!doc.exists()) {
+          alert("Must have a valid project key to use Pageblox.");
+          setIsValidApiKey(false);
+        } else {
+          setIsValidApiKey(true);
+        }
+      }
+    );
+
+    return () => {
+      unsubscribeProjects();
+    };
+  };
+
+  useEffect(() => {
+    checkProjectKey();
+  }, [pagebloxProvider.projectKey]);
+
+  if (!isValidAPIKey) {
+    return <>{pagebloxProvider.children}</>;
+  }
+
+  return (
+    <DndProvider backend={HTML5Backend}>
+      <PagebloxDndProvider
+        projectKey={pagebloxProvider.projectKey}
+        excludePaths={pagebloxProvider.excludePaths}
+      >
+        {pagebloxProvider.children}
+      </PagebloxDndProvider>
+    </DndProvider>
+  );
+};
 
 export { PagebloxProvider };
