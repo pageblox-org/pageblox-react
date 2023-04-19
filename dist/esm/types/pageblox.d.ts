@@ -21,7 +21,7 @@ export interface Reply {
 }
 interface PagebloxProviderInterface {
     children: JSX.Element;
-    projectId: string;
+    projectKey: string;
     excludePaths?: string[];
 }
 declare const PagebloxProvider: (pagebloxProvider: PagebloxProviderInterface) => JSX.Element;

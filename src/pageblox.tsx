@@ -7,6 +7,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   onSnapshot,
   query,
@@ -50,7 +51,7 @@ export interface Reply {
 
 interface PagebloxProviderInterface {
   children: JSX.Element;
-  projectId: string;
+  projectKey: string;
   excludePaths?: string[];
 }
 
@@ -79,9 +80,56 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
   const pageRef = useRef(null);
   const currentPathName =
     typeof window !== "undefined" ? window.location.pathname : "";
-  const projectId = pagebloxProvider.projectId;
 
-  useEffect(() => {
+  const saveEnabledState = async () => {
+    const searchParams = new URLSearchParams(window.location.search);
+
+    if (searchParams.has("enable_pageblox")) {
+      if (searchParams.get("enable_pageblox") === "true") {
+        const isValidAPIKey = await checkProjectKey();
+
+        if (isValidAPIKey) {
+          localStorage.setItem("pagebloxEnabled", "true");
+        } else {
+          alert("Must have a valid project key to use Pageblox.");
+        }
+      } else {
+        localStorage.setItem("pagebloxEnabled", "false");
+      }
+    }
+
+    setPagebloxEnabled(
+      localStorage.getItem("pagebloxEnabled") === "true" ?? false
+    );
+  };
+
+  const checkProjectKey = async () => {
+    const projectRef = doc(database, "projects", pagebloxProvider.projectKey);
+    const projectDoc = await getDoc(projectRef);
+
+    if (!projectDoc.exists()) {
+      alert("Must have a valid project key to use Pageblox.");
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  const checkExcludedPaths = () => {
+    if (pagebloxProvider.excludePaths) {
+      const shouldExcludePage =
+        pagebloxProvider?.excludePaths.includes(currentPathName);
+      setShowPagebloxButton(!shouldExcludePage);
+    }
+  };
+
+  const fetchDisplayName = () => {
+    const currUserInfo = localStorage.getItem("pagebloxUserInfo");
+
+    setDisplayName(currUserInfo ? JSON.parse(currUserInfo).displayName : null);
+  };
+
+  const shouldDisplayInstructions = () => {
     if (
       reviewMode &&
       localStorage.getItem("displayedInstructions") !== "true"
@@ -89,40 +137,15 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
       setShowInstructionsPopup(true);
       localStorage.setItem("displayedInstructions", "true");
     }
-  }, [reviewMode]);
+  };
 
-  useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-
-    if (searchParams.has("enable_pageblox")) {
-      localStorage.setItem(
-        "pagebloxEnabled",
-        searchParams.get("enable_pageblox") ?? "false"
-      );
-    }
-
-    setPagebloxEnabled(
-      localStorage.getItem("pagebloxEnabled") === "true" ?? false
-    );
-  }, []);
-
-  useEffect(() => {
-    fetchDisplayName();
-
-    if (pagebloxProvider.excludePaths) {
-      const shouldExcludePage =
-        pagebloxProvider?.excludePaths.includes(currentPathName);
-      setShowPagebloxButton(!shouldExcludePage);
-    }
-  }, []);
-
-  useEffect(() => {
+  const fetchComments = () => {
     if (typeof window !== "undefined") {
       const unsubscribeComments = onSnapshot(
         query(
           collection(database, COMMENTS_COLLECTION),
           where("pathname", "==", window.location.pathname),
-          where("projectId", "==", projectId)
+          where("projectId", "==", pagebloxProvider.projectKey)
         ),
         (querySnapshot) => {
           const blocks: Comment[] = [];
@@ -139,9 +162,9 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
         unsubscribeComments();
       };
     }
-  }, []);
+  };
 
-  useEffect(() => {
+  const fetchReplies = () => {
     if (typeof window !== "undefined" && blocks.length > 0) {
       const unsubscribeReplies = onSnapshot(
         query(
@@ -167,12 +190,6 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
         unsubscribeReplies();
       };
     }
-  }, [blocks]);
-
-  const fetchDisplayName = () => {
-    const currUserInfo = localStorage.getItem("pagebloxUserInfo");
-
-    setDisplayName(currUserInfo ? JSON.parse(currUserInfo).displayName : null);
   };
 
   const moveComment = useCallback(
@@ -324,7 +341,7 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
         comment: "",
         resolved: false,
         dom: getPathTo(domElement),
-        projectId: projectId,
+        projectId: pagebloxProvider.projectKey,
         pathname: window.location.pathname,
         x: x,
         y: y,
@@ -389,6 +406,18 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
       setDraftedComment(null);
     }
   };
+
+  useEffect(() => {
+    shouldDisplayInstructions();
+  }, [reviewMode]);
+
+  useEffect(() => {
+    saveEnabledState();
+    checkExcludedPaths();
+    fetchDisplayName();
+    fetchComments();
+    fetchReplies();
+  }, []);
 
   if (pagebloxEnabled) {
     return (
@@ -473,7 +502,7 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
 const PagebloxProvider = (pagebloxProvider: PagebloxProviderInterface) => (
   <DndProvider backend={HTML5Backend}>
     <PagebloxDndProvider
-      projectId={pagebloxProvider.projectId}
+      projectKey={pagebloxProvider.projectKey}
       excludePaths={pagebloxProvider.excludePaths}
     >
       {pagebloxProvider.children}
