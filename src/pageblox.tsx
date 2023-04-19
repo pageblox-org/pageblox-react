@@ -400,6 +400,10 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
     fetchReplies();
   }, []);
 
+  useEffect(() => {
+    fetchReplies();
+  }, [blocks]);
+
   if (pagebloxEnabled) {
     return (
       <>
