@@ -5,7 +5,7 @@
 </div>
 <br/>
 <p align="center">
-<a href="https://pageblox.io/signup">
+<a href="https://289qfe92z29.typeform.com/to/LJNGDV6f">
     <img src="https://img.shields.io/badge/We're%20open%20for%20alpha!-Join-%2322c55e" />
   </a>
 <a href='http://makeapullrequest.com'><img alt='PRs Welcome' src='https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=shields'/></a>
@@ -20,13 +20,13 @@
 - <b>Includes powerful interaction handling</b> such as drag & drop, sticking to elements, and hover states.
 - <b>Built with routing in mind</b>. Regardless of whether you're using React Router DOM or Next.js, it handles comments for each page in the app.
 
-Contributions are welcome! You can [try out the alpha today.](https://www.pageblox.io/signup)
+Contributions are welcome! You can [try out the alpha today.](https://289qfe92z29.typeform.com/to/LJNGDV6f)
 
 ## Installation
 
 #### Setup
 
-You'll first need to obtain a project key, which can be obtained by [signing up here.](https://www.pageblox.io/signup)
+You'll first need to obtain a project key, which can be obtained by [signing up here.](https://289qfe92z29.typeform.com/to/LJNGDV6f)
 
 Run the following command in the root of your React application using your terminal:
 
@@ -86,6 +86,6 @@ Feel free to e-mail at bhavan@pageblox.io with any questions, or [join our slack
 ## Important Links
 
 
-- [Signup here](https://www.pageblox.io/signup) to get your project key
+- [Signup here](https://289qfe92z29.typeform.com/to/LJNGDV6f) to get your project key
 - Join us on [Slack](https://join.slack.com/t/pagebloxworkspace/shared_invite/zt-1tdckdevn-3GmY2amkNY2ZpdD6iuIZmQ) to get the latest updates & support.
 - You can also e-mail me at bhavan@pageblox.io
