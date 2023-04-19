@@ -33,7 +33,7 @@ const SidebarButtons = ({
   setDisplayName,
   setReviewMode,
 }: SidebarButtonsProps) => (
-  <div className="tw-right-7 tw-top-5 tw-z-50 tw-fixed tw-flex tw-items-center tw-gap-2">
+  <div className="tw-right-7 tw-top-5 tw-z-50 tw-fixed tw-flex tw-items-center tw-gap-5">
     <button
       className="tw-border focus:tw-outline-none focus:tw-ring-4 tw-font-medium tw-rounded-lg tw-text-sm tw-px-5 tw-py-2.5 tw-tw-mr-2 tw-bg-gray-800 tw-text-white tw-border-gray-600 hover:tw-bg-gray-700 hover:tw-border-gray-600 focus:tw-ring-gray-700"
       onClick={() => {

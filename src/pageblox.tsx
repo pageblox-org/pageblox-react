@@ -24,6 +24,7 @@ import { calculateScroll } from "./utils/calculateScroll";
 import { getPathTo } from "./utils/getPathTo";
 import CreateCommentModal from "./components/CreateCommentModal";
 import { ref, uploadBytes } from "firebase/storage";
+import InstructionsPopup from "./components/InstructionsPopup";
 
 export interface Comment {
   id: string;
@@ -71,12 +72,24 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
   const [showPagebloxButton, setShowPagebloxButton] = useState<boolean>(true);
   const [displayName, setDisplayName] = useState<string | null>(null);
   const [pagebloxEnabled, setPagebloxEnabled] = useState<boolean>(false);
+  const [showInstructionsPopup, setShowInstructionsPopup] =
+    useState<boolean>(false);
 
   const currDom = useRef<HTMLElement | null>(null);
   const pageRef = useRef(null);
   const currentPathName =
     typeof window !== "undefined" ? window.location.pathname : "";
   const projectId = pagebloxProvider.projectId;
+
+  useEffect(() => {
+    if (
+      reviewMode &&
+      localStorage.getItem("displayedInstructions") !== "true"
+    ) {
+      setShowInstructionsPopup(true);
+      localStorage.setItem("displayedInstructions", "true");
+    }
+  }, [reviewMode]);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -382,6 +395,10 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
       <>
         {reviewMode ? (
           <>
+            <InstructionsPopup
+              showInstructionsPopup={showInstructionsPopup}
+              setShowInstructionsPopup={setShowInstructionsPopup}
+            />
             <Toolbar
               showCommentView={showCommentView}
               setShowCommentView={setShowCommentView}
