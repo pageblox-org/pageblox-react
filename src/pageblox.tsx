@@ -397,7 +397,6 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
     checkExcludedPaths();
     fetchDisplayName();
     fetchComments();
-    fetchReplies();
   }, []);
 
   useEffect(() => {
