@@ -22,6 +22,8 @@
 
 Contributions are welcome! You can [try out the alpha today.](https://289qfe92z29.typeform.com/to/LJNGDV6f)
 
+<img src="https://i.postimg.cc/Bv56tw09/pageblox-demo.gif" alt="demo gif" />
+
 ## Installation
 
 #### Setup
