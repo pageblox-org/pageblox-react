@@ -1,6 +1,6 @@
 {
   "name": "pageblox-react",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "description": "A react SDK that allows for annotations on the front-end",
   "repository": {
     "type": "git",
