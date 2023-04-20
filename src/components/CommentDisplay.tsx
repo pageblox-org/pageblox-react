@@ -227,7 +227,7 @@ const CommentDisplay = ({
     <>
       <div
         ref={modalRef}
-        style={{ zIndex: "1000" }}
+        style={{ zIndex: 9000 }}
         className={`tw-top-0 tw-right-0 tw-w-[25vw] tw-overflow-y-auto tw-bg-gray-900 tw-text-white tw-fixed tw-h-full tw-ease-in-out tw-duration-300 ${
           selectedComment !== null ? "tw-translate-x-0" : "tw-translate-x-full"
         }`}

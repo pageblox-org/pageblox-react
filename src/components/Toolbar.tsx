@@ -116,12 +116,12 @@ const Toolbar = ({
   return (
     <div
       className="tw-w-full tw-flex tw-items-center tw-justify-start tw-p-5 tw-fixed tw-h-20 tw-bg-gray-900"
-      style={{ zIndex: 100 }}
+      style={{ zIndex: 9000 }}
     >
       {showComments || showCommentView ? (
         <button
           type="button"
-          style={{ zIndex: 1050 }}
+          style={{ zIndex: 9050 }}
           className="tw-fixed tw-right-7 tw-top-5 tw-py-2 tw-px-3 tw-text-sm tw-font-medium tw-border tw-border-gray-600 tw-bg-gray-800 tw-text-gray-400 hover:tw-text-white hover:tw-bg-gray-700 tw-rounded-lg"
           onClick={onClose}
         >

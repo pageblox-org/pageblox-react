@@ -120,7 +120,7 @@ const CreateCommentModal = ({
       className={`${
         showCreateView ? "tw-block" : "tw-hidden"
       } tw-fixed tw-top-0 tw-left-0 tw-right-0 tw-w-full tw-p-4 tw-overflow-x-hidden tw-overflow-y-auto md:tw-inset-0 tw-h-[calc(100%-1rem)] md:tw-h-full`}
-      style={{ zIndex: 200 }}
+      style={{ zIndex: 9999 }}
       onClick={onClose}
     >
       <div className="tw-relative tw-w-full tw-h-full tw-max-w-lg md:tw-h-auto">
@@ -135,7 +135,9 @@ const CreateCommentModal = ({
               className="tw-h-6 tw-w-6 tw-inline-block"
               style={{ borderRadius: "50%", background: authorColor }}
             ></span>
-            <h3 className="tw-font-semibold tw-lowercase">{authorName}</h3>
+            <h3 className="tw-font-semibold tw-lowercase tw-text-white">
+              {authorName}
+            </h3>
           </div>
           <div className="tw-mt-2 tw-py-2 tw-px-4 tw-rounded-t-lg tw-space-y-2 tw-overflow-y-auto tw-h-40">
             <textarea
