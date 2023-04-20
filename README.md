@@ -22,7 +22,7 @@
 
 Contributions are welcome! You can [try out the alpha today.](https://289qfe92z29.typeform.com/to/LJNGDV6f)
 
-![Demo Screenshot](https://i.postimg.cc/SQzBSG3G/pageblox-demo-screenshot.png)
+<img src="https://i.postimg.cc/SQzBSG3G/pageblox-demo-screenshot.png" alt="Demo Screenshot" width="500" />
 
 ## Installation
 
