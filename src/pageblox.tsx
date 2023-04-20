@@ -15,7 +15,7 @@ import {
   where,
 } from "firebase/firestore";
 import uuid from "react-uuid";
-import { database, signInWithGoogle, storage } from "./utils/firebase-config";
+import { database, storage } from "./utils/firebase-config";
 import { ItemTypes } from "./utils/ItemTypes";
 import Toolbar from "./components/Toolbar";
 import CommentBlocks from "./components/CommentBlocks";
@@ -25,6 +25,7 @@ import { getPathTo } from "./utils/getPathTo";
 import CreateCommentModal from "./components/CreateCommentModal";
 import { ref, uploadBytes } from "firebase/storage";
 import InstructionsPopup from "./components/InstructionsPopup";
+import LoginModal from "./components/LoginModal";
 
 export interface Comment {
   id: string;
@@ -74,6 +75,7 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
   const [pagebloxEnabled, setPagebloxEnabled] = useState<boolean>(false);
   const [showInstructionsPopup, setShowInstructionsPopup] =
     useState<boolean>(false);
+  const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
 
   const currDom = useRef<HTMLElement | null>(null);
   const pageRef = useRef(null);
@@ -253,6 +255,7 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
 
   const createComment = (event: any) => {
     const boundingClientRect = event.target.getBoundingClientRect();
+    console.log("Display name: ", displayName);
 
     if (boundingClientRect !== null && displayName) {
       const domElement: HTMLElement = event.target;
@@ -318,7 +321,8 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
     if (displayName) {
       setReviewMode(!reviewMode);
     } else {
-      signInWithGoogle(setDisplayName, setReviewMode);
+      // signInWithGoogle(setDisplayName, setReviewMode);
+      setShowLoginModal(true);
     }
   };
 
@@ -401,6 +405,12 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
   if (pagebloxEnabled) {
     return (
       <>
+        <LoginModal
+          showModal={showLoginModal}
+          setShowModal={setShowLoginModal}
+          setReviewMode={setReviewMode}
+          setDisplayName={setDisplayName}
+        />
         {reviewMode ? (
           <>
             <InstructionsPopup

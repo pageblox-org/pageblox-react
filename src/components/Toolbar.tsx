@@ -2,7 +2,8 @@ import React, { RefObject, useState } from "react";
 import { Comment, Reply } from "../pageblox";
 import CommentsList from "./CommentsList";
 import CommentDisplay from "./CommentDisplay";
-import { signOutWithGoogle } from "../utils/firebase-config";
+import { signOut } from "firebase/auth";
+import { auth } from "../utils/firebase-config";
 
 interface SidebarButtonsProps {
   setShowComments: (show: boolean) => void;
@@ -32,43 +33,55 @@ const SidebarButtons = ({
   comments,
   setDisplayName,
   setReviewMode,
-}: SidebarButtonsProps) => (
-  <div className="tw-right-7 tw-top-5 tw-z-50 tw-fixed tw-flex tw-items-center tw-gap-5">
-    <button
-      className="tw-border focus:tw-outline-none focus:tw-ring-4 tw-font-medium tw-rounded-lg tw-text-sm tw-px-5 tw-py-2.5 tw-tw-mr-2 tw-bg-gray-800 tw-text-white tw-border-gray-600 hover:tw-bg-gray-700 hover:tw-border-gray-600 focus:tw-ring-gray-700"
-      onClick={() => {
-        signOutWithGoogle(setDisplayName, setReviewMode);
-      }}
-    >
-      Log out
-    </button>
-    <button
-      type="button"
-      className="tw-relative tw-bg-gray-700 hover:tw-bg-gray-600 tw-rounded-full tw-p-2.5 tw-inline-flex tw-items-center"
-      onClick={() => setShowComments(true)}
-    >
-      <svg
-        className="feather feather-message-square"
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="#ffffff"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+}: SidebarButtonsProps) => {
+  const onSignout = async () => {
+    try {
+      await signOut(auth);
+      localStorage.removeItem("pagebloxUserInfo");
+
+      setDisplayName(null);
+      setReviewMode(false);
+    } catch (error) {
+      alert(`Error signing out: ${error}`);
+    }
+  };
+
+  return (
+    <div className="tw-right-7 tw-top-5 tw-z-50 tw-fixed tw-flex tw-items-center tw-gap-5">
+      <button
+        className="tw-border focus:tw-outline-none focus:tw-ring-4 tw-font-medium tw-rounded-lg tw-text-sm tw-px-5 tw-py-2.5 tw-tw-mr-2 tw-bg-gray-800 tw-text-white tw-border-gray-600 hover:tw-bg-gray-700 hover:tw-border-gray-600 focus:tw-ring-gray-700"
+        onClick={() => onSignout()}
       >
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-      </svg>
-      {comments.length > 0 && (
-        <div className="tw-absolute tw-inline-flex tw-items-center tw-justify-center tw-w-6 tw-h-6 tw-text-xs tw-font-bold tw-text-white tw-bg-indigo-700 tw-border-2 tw-rounded-full -tw-top-2 -tw-right-2 tw-border-gray-900">
-          {comments.length}
-        </div>
-      )}
-    </button>
-  </div>
-);
+        Sign out
+      </button>
+      <button
+        type="button"
+        className="tw-relative tw-bg-gray-700 hover:tw-bg-gray-600 tw-rounded-full tw-p-2.5 tw-inline-flex tw-items-center"
+        onClick={() => setShowComments(true)}
+      >
+        <svg
+          className="feather feather-message-square"
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#ffffff"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+        {comments.length > 0 && (
+          <div className="tw-absolute tw-inline-flex tw-items-center tw-justify-center tw-w-6 tw-h-6 tw-text-xs tw-font-bold tw-text-white tw-bg-indigo-700 tw-border-2 tw-rounded-full -tw-top-2 -tw-right-2 tw-border-gray-900">
+            {comments.length}
+          </div>
+        )}
+      </button>
+    </div>
+  );
+};
 
 const Toolbar = ({
   showCommentView,
