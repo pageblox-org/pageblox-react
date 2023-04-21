@@ -76,6 +76,7 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
   const [showInstructionsPopup, setShowInstructionsPopup] =
     useState<boolean>(false);
   const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
+  const [isValidAPIKey, setIsValidApiKey] = useState(false);
 
   const currDom = useRef<HTMLElement | null>(null);
   const pageRef = useRef(null);
@@ -318,10 +319,14 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
   };
 
   const onWidgetClick = () => {
-    if (displayName) {
-      setReviewMode(!reviewMode);
+    if (isValidAPIKey) {
+      if (displayName) {
+        setReviewMode(!reviewMode);
+      } else {
+        setShowLoginModal(true);
+      }
     } else {
-      setShowLoginModal(true);
+      alert("Must have a valid project key to use Pageblox.");
     }
   };
 
@@ -337,6 +342,23 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
       setDraftedComment(null);
     }
   };
+
+  useEffect(() => {
+    const unsubscribeProjects = onSnapshot(
+      doc(database, "projects", pagebloxProvider.projectKey),
+      (doc) => {
+        if (!doc.exists()) {
+          setIsValidApiKey(false);
+        } else {
+          setIsValidApiKey(true);
+        }
+      }
+    );
+
+    return () => {
+      unsubscribeProjects();
+    };
+  }, [pagebloxProvider.projectKey]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -487,45 +509,15 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
   }
 };
 
-const PagebloxProvider = (pagebloxProvider: PagebloxProviderInterface) => {
-  const [isValidAPIKey, setIsValidApiKey] = useState(false);
-
-  const checkProjectKey = () => {
-    const unsubscribeProjects = onSnapshot(
-      doc(database, "projects", pagebloxProvider.projectKey),
-      (doc) => {
-        if (!doc.exists()) {
-          alert("Must have a valid project key to use Pageblox.");
-          setIsValidApiKey(false);
-        } else {
-          setIsValidApiKey(true);
-        }
-      }
-    );
-
-    return () => {
-      unsubscribeProjects();
-    };
-  };
-
-  useEffect(() => {
-    checkProjectKey();
-  }, [pagebloxProvider.projectKey]);
-
-  if (!isValidAPIKey) {
-    return <>{pagebloxProvider.children}</>;
-  }
-
-  return (
-    <DndProvider backend={HTML5Backend}>
-      <PagebloxDndProvider
-        projectKey={pagebloxProvider.projectKey}
-        excludePaths={pagebloxProvider.excludePaths}
-      >
-        {pagebloxProvider.children}
-      </PagebloxDndProvider>
-    </DndProvider>
-  );
-};
+const PagebloxProvider = (pagebloxProvider: PagebloxProviderInterface) => (
+  <DndProvider backend={HTML5Backend}>
+    <PagebloxDndProvider
+      projectKey={pagebloxProvider.projectKey}
+      excludePaths={pagebloxProvider.excludePaths}
+    >
+      {pagebloxProvider.children}
+    </PagebloxDndProvider>
+  </DndProvider>
+);
 
 export { PagebloxProvider };
