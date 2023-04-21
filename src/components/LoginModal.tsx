@@ -96,25 +96,31 @@ const SignupForm = ({
   const onSignup = async (event: FormEvent) => {
     event.preventDefault();
     setLoading(true);
-    try {
-      if (password === confirmPassword) {
-        const userCredential = await createUserWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-
-        await setDoc(doc(database, "users", userCredential.user.uid), {
-          displayName: displayName,
-          email: email,
+    if (password === confirmPassword) {
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          setLoading(false);
+          const user = userCredential.user;
+          if (user) {
+            const userId = user.uid;
+            setDoc(doc(database, "users", userId), {
+              displayName: displayName,
+            })
+              .then(() => {
+                onAuthenticate(userId, displayName);
+              })
+              .catch((error) => {
+                alert("Error writing user to database: " + error);
+              });
+          }
+        })
+        .catch((error) => {
+          setLoading(false);
+          alert("Signup Error: " + error.code + error.message);
         });
-
-        setLoading(false);
-        onAuthenticate(userCredential.user.uid, displayName);
-      }
-    } catch (error: any) {
+    } else {
       setLoading(false);
-      alert("Signup Error: " + error.code + error.message);
+      alert("Passwords do not match");
     }
   };
 
@@ -259,27 +265,28 @@ const LoginForm = ({
   const onLogin = async (event: FormEvent) => {
     event.preventDefault();
     setLoading(true);
-    try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = await getDoc(
-        doc(database, "users", userCredential.user.uid)
-      );
-      const userData = user.data();
 
-      if (userData) {
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        getDoc(doc(database, "users", userCredential.user.uid))
+          .then((doc) => {
+            const userData = doc.data();
+            if (userData) {
+              setLoading(false);
+              onAuthenticate(userCredential.user.uid, userData.displayName);
+            } else {
+              throw new Error("User data not found");
+            }
+          })
+          .catch((error) => {
+            setLoading(false);
+            alert("Signup Error: " + error.code + error.message);
+          });
+      })
+      .catch((error) => {
         setLoading(false);
-        onAuthenticate(userCredential.user.uid, userData.displayName);
-      } else {
-        throw new Error("User data not found");
-      }
-    } catch (error: any) {
-      setLoading(false);
-      alert("Signup Error: " + error.code + error.message);
-    }
+        alert("Login Error: " + error.code + error.message);
+      });
   };
 
   return (
