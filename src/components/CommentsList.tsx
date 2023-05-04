@@ -46,7 +46,7 @@ const CommentsList = ({
       }`}
     >
       {sortedComments.length > 0 && (
-        <ul className="tw-bg-gray-900 tw-mt-16 tw-overflow-y-auto">
+        <ul className="tw-bg-gray-900 tw-divide-y tw-divide-gray-700 tw-mt-16 tw-overflow-y-auto">
           {sortedComments.map((comment) => {
             const commentReplies = replies.filter(
               (reply) => reply.parent_comment_id === comment.id

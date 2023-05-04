@@ -22,7 +22,7 @@ const CommentBlocks = ({
   const selectedCommentExists = selectedComment !== null;
 
   return (
-    <div>
+    <div className="tw-pageblox">
       {blocks.map((block: Comment) => {
         if (block.resolved === false) {
           if (selectedCommentExists) {

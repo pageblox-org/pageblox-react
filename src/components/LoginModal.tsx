@@ -125,7 +125,7 @@ const SignupForm = ({
   };
 
   return (
-    <div className="tw-fixed tw-z-10 tw-inset-0 tw-overflow-y-auto">
+    <div className="tw-pageblox tw-fixed tw-z-10 tw-inset-0 tw-overflow-y-auto">
       <div className="tw-flex tw-items-end tw-justify-center tw-min-h-screen tw-pt-4 tw-px-4 tw-pb-20 tw-text-center sm:tw-block sm:tw-p-0">
         <div
           className="tw-fixed tw-inset-0 tw-transition-opacity"
@@ -290,7 +290,7 @@ const LoginForm = ({
   };
 
   return (
-    <div className="tw-fixed tw-z-10 tw-inset-0 tw-overflow-y-auto">
+    <div className="tw-pageblox tw-fixed tw-z-10 tw-inset-0 tw-overflow-y-auto">
       <div className="tw-flex tw-items-end tw-justify-center tw-min-h-screen tw-pt-4 tw-px-4 tw-pb-20 tw-text-center sm:tw-block sm:tw-p-0">
         <div
           className="tw-fixed tw-inset-0 tw-transition-opacity"

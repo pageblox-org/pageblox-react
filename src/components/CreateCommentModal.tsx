@@ -117,7 +117,7 @@ const CreateCommentModal = ({
 
   return (
     <div
-      className={`${
+      className={`tw-pageblox ${
         showCreateView ? "tw-block" : "tw-hidden"
       } tw-fixed tw-top-0 tw-left-0 tw-right-0 tw-w-full tw-p-4 tw-overflow-x-hidden tw-overflow-y-auto md:tw-inset-0 tw-h-[calc(100%-1rem)] md:tw-h-full`}
       style={{ zIndex: 9999 }}
