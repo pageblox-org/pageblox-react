@@ -1,6 +1,6 @@
 {
   "name": "pageblox-react",
-  "version": "1.3.10",
+  "version": "1.3.11",
   "description": "React library to review UX/UI code changes in the browser",
   "repository": {
     "type": "git",
