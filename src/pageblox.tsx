@@ -185,11 +185,11 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
           if (currDom.current !== domElement) {
             if (currDom.current) {
               currDom.current.style.backgroundColor = "";
-              domElement.style.backgroundColor = "rgb(59 130 246)";
+              domElement.style.backgroundColor = "rgba(59, 130, 246, 0.5)";
               currDom.current = domElement;
             } else {
               currDom.current = domElement;
-              currDom.current.style.backgroundColor = "rgb(59 130 246)";
+              currDom.current.style.backgroundColor = "rgba(59, 130, 246, 0.5)";
             }
           }
         }
@@ -280,16 +280,6 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
       };
 
       toggleCreateModal(true, newComment);
-    }
-  };
-
-  const highlightElementArea = (event: any) => {
-    const domElement: HTMLElement = event.target;
-
-    if (event.type === "mouseover") {
-      domElement.style.backgroundColor = "rgb(59 130 246)";
-    } else if (event.type === "mouseout") {
-      domElement.style.backgroundColor = "";
     }
   };
 
@@ -468,8 +458,6 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
                   setShowCommentView={setShowCommentView}
                 />
                 <div
-                  onMouseOver={highlightElementArea}
-                  onMouseOut={highlightElementArea}
                   onDoubleClickCapture={createComment}
                   onClickCapture={onPagebloxClick}
                 >
