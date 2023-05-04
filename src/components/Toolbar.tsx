@@ -128,7 +128,7 @@ const Toolbar = ({
 
   return (
     <div
-      className="tw-w-full tw-flex tw-items-center tw-justify-start tw-p-5 tw-fixed tw-h-20 tw-bg-gray-900"
+      className="tw-pageblox tw-w-full tw-flex tw-items-center tw-justify-start tw-p-5 tw-fixed tw-left-0 tw-top-0 tw-h-20 tw-bg-gray-900"
       style={{ zIndex: 9000 }}
     >
       {showComments || showCommentView ? (
