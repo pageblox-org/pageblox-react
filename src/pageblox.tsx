@@ -142,6 +142,9 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
         const windowCoords: XYCoord | null = monitor.getClientOffset();
 
         const initialElement: HTMLElement = item.domElement;
+
+        console.log("Initial Element: ", initialElement);
+
         const finalElement: HTMLElement | null =
           windowCoords &&
           (document.elementFromPoint(
@@ -149,8 +152,16 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
             windowCoords?.y
           ) as HTMLElement);
 
-        if (finalElement) {
-          if (currDom.current && finalElement === currDom.current) {
+        let finalDomElement: HTMLElement;
+
+        if (finalElement?.tagName === "IMG") {
+          finalDomElement = finalElement?.parentNode as HTMLElement;
+        } else {
+          finalDomElement = finalElement as HTMLElement;
+        }
+
+        if (finalDomElement) {
+          if (currDom.current && finalDomElement === currDom.current) {
             currDom.current.style.backgroundColor = "";
             currDom.current = null;
           }
@@ -166,11 +177,11 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
           };
 
           const finalX =
-            finalWindowCoords.x - finalElement.getBoundingClientRect().left;
+            finalWindowCoords.x - finalDomElement.getBoundingClientRect().left;
           const finalY =
-            finalWindowCoords.y - finalElement.getBoundingClientRect().top;
+            finalWindowCoords.y - finalDomElement.getBoundingClientRect().top;
 
-          moveComment(item.id, finalX, finalY, finalElement);
+          moveComment(item.id, finalX, finalY, finalDomElement);
         }
       },
       hover(item, monitor) {
@@ -255,12 +266,17 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
   };
 
   const createComment = (event: any) => {
-    const boundingClientRect = event.target.getBoundingClientRect();
-    console.log("Display name: ", displayName);
+    let domElement;
+
+    if (event.target.tagName === "IMG") {
+      domElement = event.target.parentElement;
+    } else {
+      domElement = event.target;
+    }
+
+    const boundingClientRect = domElement.getBoundingClientRect();
 
     if (boundingClientRect !== null && displayName) {
-      const domElement: HTMLElement = event.target;
-
       const [scrollTop, scrollLeft] = calculateScroll(domElement);
       const x = event.pageX - (boundingClientRect.left + scrollLeft);
       const y = event.pageY - (boundingClientRect.top + scrollTop);

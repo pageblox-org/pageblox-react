@@ -94,7 +94,7 @@ const CommentsList = ({
                     )}
                   </div>
                 </div>
-                <p className="tw-mt-2">{comment.comment}</p>
+                <p className="tw-mt-2 tw-text-left">{comment.comment}</p>
                 <div className="tw-mt-2 tw-flex tw-justify-end tw-items-center tw-text-sm tw-gap-2">
                   {commentReplies.length > 0 && (
                     <p className="tw-text-gray-100">{`${

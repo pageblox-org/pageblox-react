@@ -27,7 +27,6 @@ export const PublishedComment = ({
 }: PublishedCommentProps): JSX.Element => {
   const { id, profileColor, profileName, dom, x, y } = block || {};
   const [domElement, setDomElement] = useState<HTMLElement | null>(null);
-
   const ref = useOutsideClick(() => {
     setSelectedComment(null);
     setShowCommentView(false);
@@ -60,6 +59,8 @@ export const PublishedComment = ({
       null
     ).singleNodeValue as HTMLElement;
 
+    console.log("Target element", targetElement);
+
     if (targetElement) {
       targetElement.classList.add("tw-relative");
       setDomElement(targetElement);
@@ -83,8 +84,8 @@ export const PublishedComment = ({
           position: "absolute",
           left: x,
           top: y,
-          zIndex: 250,
           cursor: "default",
+          zIndex: 25,
         }}
         onClick={handleRepliesClick}
       >
