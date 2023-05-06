@@ -36,7 +36,7 @@ Run the following command in the root of your React application using your termi
   npm install pageblox-react
   ```
 
-After installation, you need to wrap your application with ```PagebloxProvider```.
+After installation, you need to wrap your application with ```PagebloxProvider``` and import the ```pageblox.css``` file.
 
   #### Using NextJS
   
@@ -44,7 +44,7 @@ After installation, you need to wrap your application with ```PagebloxProvider``
 
   ```jsx
   import { PagebloxProvider } from 'pageblox-react'
-  import 'pageblox-react/dist/index.css'
+  import 'pageblox-react/dist/pageblox.css'
 
   export default function App({ Component, pageProps }) {
     return (
@@ -55,22 +55,28 @@ After installation, you need to wrap your application with ```PagebloxProvider``
   }
   ```
   
-  #### Create React App Example
+  #### Using React Router + CRA/Vite.js
 
   We can use the default ```index.js``` file to wrap our app with Pageblox.
 
   ```jsx
-  import App from './App';
-  import { PagebloxProvider } from 'pageblox-react';
-  import 'pageblox-react/dist/index.css';
+  import React from 'react'
+  import ReactDOM from 'react-dom/client'
+  import { BrowserRouter } from 'react-router-dom'
+  import { PagebloxProvider } from 'pageblox-react'
+  import App from './App.jsx'
+  import './index.css'
+  import "pageblox-react/dist/pageblox.css"
 
-  export default function App({ Component, pageProps }) {
-    return (
-      <PagebloxProvider projectId="playgroundKey">
-        <App />
+  ReactDOM.createRoot(document.getElementById('root')).render(
+    <React.StrictMode>
+      <PagebloxProvider projectKey="ePNLS2Blx9hXni9duEE3">
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
       </PagebloxProvider>
-    )
-  }
+    </React.StrictMode>,
+  )
   ```
 
 ## Usage
@@ -83,11 +89,9 @@ To disable Pageblox, append ```?enable_pageblox=false``` to your site's URL. Thi
 
 ## Where to get help
 
-Feel free to e-mail at bhavan@pageblox.io with any questions, or [join our slack channel](https://join.slack.com/t/pagebloxworkspace/shared_invite/zt-1tdckdevn-3GmY2amkNY2ZpdD6iuIZmQ) to get support & latest updates.
+You can raise issues in this repo, or feel free to e-mail at bhavan@pageblox.io with any questions.
 
 ## Important Links
 
-
 - [Signup here](https://289qfe92z29.typeform.com/to/LJNGDV6f) to get your project key
-- Join us on [Slack](https://join.slack.com/t/pagebloxworkspace/shared_invite/zt-1tdckdevn-3GmY2amkNY2ZpdD6iuIZmQ) to get the latest updates & support.
-- You can also e-mail me at bhavan@pageblox.io
+- E-mail bhavan@pageblox.io to get the latest updates & support.
