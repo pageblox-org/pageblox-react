@@ -34,6 +34,10 @@ const SidebarButtons = ({
   setDisplayName,
   setReviewMode,
 }: SidebarButtonsProps) => {
+  let unresolvedComments = comments.filter(
+    (comment) => comment.resolved == false
+  );
+
   const onSignout = async () => {
     try {
       await signOut(auth);
@@ -73,9 +77,9 @@ const SidebarButtons = ({
         >
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
         </svg>
-        {comments.length > 0 && (
+        {unresolvedComments.length > 0 && (
           <div className="tw-absolute tw-inline-flex tw-items-center tw-justify-center tw-w-6 tw-h-6 tw-text-xs tw-font-bold tw-text-white tw-bg-indigo-700 tw-border-2 tw-rounded-full -tw-top-2 -tw-right-2 tw-border-gray-900">
-            {comments.length}
+            {unresolvedComments.length}
           </div>
         )}
       </button>

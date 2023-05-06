@@ -59,8 +59,6 @@ export const PublishedComment = ({
       null
     ).singleNodeValue as HTMLElement;
 
-    console.log("Target element", targetElement);
-
     if (targetElement) {
       targetElement.classList.add("tw-relative");
       setDomElement(targetElement);
@@ -69,7 +67,7 @@ export const PublishedComment = ({
         targetElement.classList.remove("tw-static");
       };
     }
-  }, [dom]);
+  }, [block]);
 
   if (isDragging) {
     return <div ref={drag} />;

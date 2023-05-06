@@ -375,6 +375,7 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
           where("projectId", "==", pagebloxProvider.projectKey)
         ),
         (querySnapshot) => {
+          console.log("Fetching comments...");
           const blocks: Comment[] = [];
 
           querySnapshot.forEach((doc) => {
@@ -389,7 +390,7 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
         unsubscribeComments();
       };
     }
-  }, []);
+  }, [window.location.pathname, pagebloxProvider.projectKey]);
 
   useEffect(() => {
     if (typeof window !== "undefined" && blocks.length > 0) {
