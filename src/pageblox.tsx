@@ -53,6 +53,7 @@ interface PagebloxProviderInterface {
   children: JSX.Element;
   projectKey: string;
   excludePaths?: string[];
+  enabled: boolean;
 }
 
 const COMMENTS_COLLECTION =
@@ -72,7 +73,6 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
   const [draftedComment, setDraftedComment] = useState<Comment | null>(null);
   const [showPagebloxButton, setShowPagebloxButton] = useState<boolean>(true);
   const [displayName, setDisplayName] = useState<string | null>(null);
-  const [pagebloxEnabled, setPagebloxEnabled] = useState<boolean>(false);
   const [showInstructionsPopup, setShowInstructionsPopup] =
     useState<boolean>(false);
   const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
@@ -82,22 +82,6 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
   const pageRef = useRef(null);
   const currentPathName =
     typeof window !== "undefined" ? window.location.pathname : "";
-
-  const saveEnabledState = async () => {
-    const searchParams = new URLSearchParams(window.location.search);
-
-    if (searchParams.has("enable_pageblox")) {
-      if (searchParams.get("enable_pageblox") === "true") {
-        localStorage.setItem("pagebloxEnabled", "true");
-      } else {
-        localStorage.setItem("pagebloxEnabled", "false");
-      }
-    }
-
-    setPagebloxEnabled(
-      localStorage.getItem("pagebloxEnabled") === "true" ?? false
-    );
-  };
 
   const checkExcludedPaths = () => {
     if (pagebloxProvider.excludePaths) {
@@ -425,12 +409,11 @@ const PagebloxDndProvider = (pagebloxProvider: PagebloxProviderInterface) => {
   }, [reviewMode]);
 
   useEffect(() => {
-    saveEnabledState();
     checkExcludedPaths();
     fetchDisplayName();
   }, []);
 
-  if (pagebloxEnabled) {
+  if (pagebloxProvider.enabled) {
     return (
       <>
         <LoginModal
@@ -519,6 +502,7 @@ const PagebloxProvider = (pagebloxProvider: PagebloxProviderInterface) => (
     <PagebloxDndProvider
       projectKey={pagebloxProvider.projectKey}
       excludePaths={pagebloxProvider.excludePaths}
+      enabled={pagebloxProvider.enabled}
     >
       {pagebloxProvider.children}
     </PagebloxDndProvider>

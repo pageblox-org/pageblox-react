@@ -23,6 +23,7 @@ interface PagebloxProviderInterface {
     children: JSX.Element;
     projectKey: string;
     excludePaths?: string[];
+    enabled: boolean;
 }
 declare const PagebloxProvider: (pagebloxProvider: PagebloxProviderInterface) => JSX.Element;
 export { PagebloxProvider };
