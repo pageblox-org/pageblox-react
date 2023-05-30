@@ -5,32 +5,23 @@
 </div>
 <br/>
 <p align="center">
-<a href="https://289qfe92z29.typeform.com/to/LJNGDV6f">
-    <img src="https://img.shields.io/badge/We're%20open%20for%20alpha!-Join-%2322c55e" />
-  </a>
 <a href='http://makeapullrequest.com'><img alt='PRs Welcome' src='https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=shields'/></a>
-<a href='https://join.slack.com/t/pagebloxworkspace/shared_invite/zt-1tdckdevn-3GmY2amkNY2ZpdD6iuIZmQ'><img alt="Join Slack Community" src="https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white" height="20"/></a>
 <img src="https://img.shields.io/badge/license-MIT-green" />
 </p>
 
 # Pageblox
 [Pageblox](https://www.pageblox.io) is an open-source React tool that generates preview links with a real-time, collaboration review interface. It replaces the back-and-forth screen recordings and conversations that usually occur when giving feedback on UX/UI changes.
 
-Contributions are welcome! You can [try out the alpha today.](https://289qfe92z29.typeform.com/to/LJNGDV6f)
-
 <img src="https://i.postimg.cc/SQzBSG3G/pageblox-demo-screenshot.png" alt="Demo Screenshot" width="500" />
 
 ## Installation
 
-### React Library
+### Generating a project ID
 
-You'll first need to obtain a project key, which can be obtained by [signing up here.](https://289qfe92z29.typeform.com/to/LJNGDV6f)
+Start by generating a unique project key, so that comments/replies have a dependency to your repo.
+You can visit https://www.uuidtools.com/ to generate a UUID.
 
-Run the following command in the root of your React application using your terminal:
-
-  ```bash
-  npm install pageblox-react
-  ```
+Store this somewhere, to pass in as a prop into your <Pageblox/> described further below.
 
 ### Github Actions
 
@@ -68,6 +59,14 @@ jobs:
         with:
           folder: dist # The folder the action should deploy. Adjust this value based on your react library.
 ```
+
+### React Library
+
+To install the library, run the following command inside your root directory:
+
+  ```bash
+  npm install pageblox-react
+  ```
 
 ## Usage
 
@@ -132,5 +131,8 @@ You can raise issues in this repo, or feel free to e-mail at bhavan@pageblox.io 
 
 ## Important Links
 
-- [Signup here](https://289qfe92z29.typeform.com/to/LJNGDV6f) to get your project key
+- [Use this](https://www.uuidtools.com/) to generate a unique project key
 - E-mail bhavan@pageblox.io to get the latest updates & support.
+
+## Acknowledgements
+- <a href="https://github.com/JamesIves/github-pages-deploy-action">JamesIves/github-pages-deploy-action (MIT)</a>
